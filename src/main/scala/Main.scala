@@ -106,7 +106,8 @@ object Reef {
         0.0
       )
 
-    def K_Tilde = ???
+    def K_Tilde =
+      1 / ( pow(nu1,2)/(alpha*K + N.*deltaK) +  (pow((1-nu1),2))/((1-alpha)*K) )
 
     def n_eq = if(E_eq == 0) K_Tilde else n_eq_compute
 

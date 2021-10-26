@@ -68,4 +68,60 @@ object Reef {
       (p1 + p2 - c) * E
 
     Dynamic(dn, dE).integrate(Array(n0, E0), step, Vector(t)).last
+
+
+  def equilibrium(
+
+
+            V: Double,
+            alpha: Double,
+            gama: Double,
+            sigma: Double,
+            K: Double,
+            deltaK: Double,
+            a: Double,
+            c: Double,
+            p: Double,
+            q: Double,
+            r: Double,
+            n0: Double,
+            E0: Double,
+            beta0: Double,
+            t: Double,
+            step: Double = 0.001) =
+
+    def beta(v: Double) =
+      beta0 * V / (1 + sigma * V)
+
+    def nu1 =
+      def p1 = a / ((1 - alpha) * K) + beta(V)
+      def p2 = (a / ((1 - alpha) * K)) + beta(V) + (a / (alpha * K + V * deltaK))
+      p1 / p2
+
+    def n_eq =
+      c / (p*q*(gamma*nu1 + (1-gamma_).*(1-nu1);
+
+    def E_eq =
+      math.max(
+        r / (q*(gamma*nu1 + (1-gamma)*(1-nu1))) * (1 - (nu1^2).*n_eq./(alpha*K + N*dK) - ((1-nu1)^2)*n_eq/((1-alpha_)*K)),
+        0.0
+      )
+
+  // ATTENTION : Si E_eq devient négatif, c'est bien sur qu'il n'y a plus
+    // de capture stable a l'equilibre possible, et donc il faut passer à
+    // l'autre équilibre E_eq=0 qui devient alors stable, avec n_eq = K_tilde
+//  i=find(E_etoile<0);
+//  E_etoile(i)=0;
+//  K_tilde = 1 ./ ( (nu1_etoile.^2)./(alpha_.*K + N.*dK) +  (nu2_etoile.^2)./((1-alpha_).*K) );
+//  n_eq(i) = K_tilde;
+
+  def Captures_zoneAH =
+    q*(nu1*n_eq*gamma*E_eq);
+
+  def Captures_zone_peche =
+    q*((1-nu1)*n_eq*(1-gamma)*E_eq)
+
+  def Captures_total =
+    Captures_zoneAH + Captures_zone_peche
+
 }

@@ -71,24 +71,23 @@ object Reef {
 
 
   def equilibrium(
-
-
-            V: Double,
-            alpha: Double,
-            gama: Double,
-            sigma: Double,
-            K: Double,
-            deltaK: Double,
-            a: Double,
-            c: Double,
-            p: Double,
-            q: Double,
-            r: Double,
-            n0: Double,
-            E0: Double,
-            beta0: Double,
-            t: Double,
-            step: Double = 0.001) =
+    V: Double,
+    alpha: Double,
+    gama: Double,
+    sigma: Double,
+    K: Double,
+    deltaK: Double,
+    a: Double,
+    c: Double,
+    p: Double,
+    q: Double,
+    r: Double,
+    n0: Double,
+    E0: Double,
+    beta0: Double,
+    t: Double,
+    step: Double = 0.001) =
+    import math.*
 
     def beta(v: Double) =
       beta0 * V / (1 + sigma * V)
@@ -98,14 +97,19 @@ object Reef {
       def p2 = (a / ((1 - alpha) * K)) + beta(V) + (a / (alpha * K + V * deltaK))
       p1 / p2
 
-    def n_eq =
-      c / (p*q*(gamma*nu1 + (1-gamma_).*(1-nu1);
+    def n_eq_compute =
+      c / (p * q * (gama * nu1 + (1 - gama) *(1-nu1)))
 
     def E_eq =
       math.max(
-        r / (q*(gamma*nu1 + (1-gamma)*(1-nu1))) * (1 - (nu1^2).*n_eq./(alpha*K + N*dK) - ((1-nu1)^2)*n_eq/((1-alpha_)*K)),
+        r / (q*(gama*nu1 + (1-gama) * (1 - nu1))) * (1 - (pow(nu1,2)) * n_eq_compute / (alpha * K + n_eq_compute * deltaK) - (pow(1-nu1,2))*n_eq_compute/ ((1 - alpha) * K)),
         0.0
       )
+
+    def K_Tilde = ???
+
+    def n_eq = if(E_eq == 0) K_Tilde else n_eq_compute
+
 
   // ATTENTION : Si E_eq devient négatif, c'est bien sur qu'il n'y a plus
     // de capture stable a l'equilibre possible, et donc il faut passer à
@@ -115,13 +119,15 @@ object Reef {
 //  K_tilde = 1 ./ ( (nu1_etoile.^2)./(alpha_.*K + N.*dK) +  (nu2_etoile.^2)./((1-alpha_).*K) );
 //  n_eq(i) = K_tilde;
 
-  def Captures_zoneAH =
-    q*(nu1*n_eq*gamma*E_eq);
+    def Captures_zoneAH =
+      q *(nu1* n_eq *gama * E_eq)
 
-  def Captures_zone_peche =
-    q*((1-nu1)*n_eq*(1-gamma)*E_eq)
+    def Captures_zone_peche =
+      q*((1-nu1)*n_eq*(1-gama)*E_eq)
 
-  def Captures_total =
-    Captures_zoneAH + Captures_zone_peche
+    def Captures_total =
+      Captures_zoneAH + Captures_zone_peche
+
+    Vector(Captures_zoneAH, Captures_zone_peche)
 
 }

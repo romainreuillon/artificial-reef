@@ -2,6 +2,7 @@ target/
 target/*
 .idea*/*
 .bsp/
+matlab/
 build.xml
 nbactions.xml
 /nbproject/

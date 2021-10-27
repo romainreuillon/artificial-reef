@@ -29,8 +29,8 @@ package reef
 
 @main def graph(gama: Double) =
   def curve(gama: Double) =
-    (BigDecimal(0.0) to 10.0 by 0.1) map { V =>
-      Reef.reef(
+    (BigDecimal(0.0) to 10.0 by 1) map { V =>
+      Reef.equilibrium(
         c = 1, //cout d'exploitation
         p = 1, //Fish price
 
@@ -40,8 +40,8 @@ package reef
         a = 2, //Fish mobility
 
         alpha = 0.2, //Ratio of MPA
-        deltaK = 10, //Fish carrying capacity per AR
-        beta0 = 0.5, //AR attraction parameter 1
+        deltaK = 5, //Fish carrying capacity per AR
+        beta0 = 1, //AR attraction parameter 1
         sigma = 0.1, //AR attraction parameter 2
 
         V = V.toDouble, // Volume de recif ( (10m2)
@@ -75,15 +75,17 @@ object Reef {
     beta0: Double,
     t: Double,
     step: Double = 0.001) =
+    println(V)
 
     def beta(v: Double) =
       beta0 * V / (1 + sigma * V)
+    println(beta(V))
 
     def nu1 =
       def p1 = a / ((1 - alpha) * K) + beta(V)
       def p2 = (a / ((1 - alpha) * K)) + beta(V) + (a / (alpha * K + V * deltaK))
       p1 / p2
-
+    println(nu1)
     import math.*
     def dn(state: Array[Double], t: Double) =
       def n = state(0)
@@ -125,6 +127,8 @@ object Reef {
     step: Double = 0.001) =
     import math.*
 
+    println(V)
+
     def beta(v: Double) =
       beta0 * V / (1 + sigma * V)
 
@@ -132,15 +136,19 @@ object Reef {
       def p1 = a / ((1 - alpha) * K) + beta(V)
       def p2 = (a / ((1 - alpha) * K)) + beta(V) + (a / (alpha * K + V * deltaK))
       p1 / p2
+    println(nu1)
 
     def n_eq_compute =
       c / (p * q * (gama * nu1 + (1 - gama) *(1-nu1)))
 
+    println(n_eq_compute)
+
     def E_eq =
       math.max(
-        r / (q*(gama*nu1 + (1-gama) * (1 - nu1))) * (1 - (pow(nu1,2)) * n_eq_compute / (alpha * K + n_eq_compute * deltaK) - (pow(1-nu1,2))*n_eq_compute/ ((1 - alpha) * K)),
+        r / (q*(gama*nu1 + (1-gama) * (1 - nu1))) * (1 - (pow(nu1,2)) * n_eq_compute / (alpha * K + V * deltaK) - (pow(1-nu1,2))*n_eq_compute/ ((1 - alpha) * K)),
         0.0
       )
+    println(E_eq)
 
     def K_Tilde =
       1 / ( pow(nu1,2)/(alpha*K + V *deltaK) +  (pow((1-nu1),2))/((1-alpha)*K) )

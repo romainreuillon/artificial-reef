@@ -56,7 +56,51 @@ package reef
   println(curve(gama))
 
 
+@main def pattern =
+  def f(gama: Double, V: Double) =
+    Reef.equilibrium(
+      c = 1, //cout d'exploitation
+      p = 1, //Fish price
+
+      q = 1, //Fish catchability
+      K = 100, //Fish carrying capacity of the environment
+      r = 0.5, //Fish growth rate
+      a = 2, //Fish mobility
+
+      alpha = 0.2, //Ratio of MPA
+      deltaK = 5, //Fish carrying capacity per AR
+      beta0 = 1, //AR attraction parameter 1
+      sigma = 0.1, //AR attraction parameter 2
+
+      V = V, // Volume de recif ( (10m2)
+      gama = gama, //Distribution of Fishing effort between fishing area and artificial reef
+
+      // conditions initiale (pour EDO)
+      n0 = 1,
+      E0 = 1,
+      t = 10).sum
+
+  println(Reef.seuilOptimum(f))
+  println(Reef.seuilEfficacite(f))
+
+
 object Reef {
+
+  // F (gama, V) => capture totale
+  def seuilOptimum(f: (Double, Double) => Double) =
+    (BigDecimal(0.0) to 1.0 by 0.001).view.find { gama =>
+      val f0 = f(gama.toDouble, 0.0)
+      val f10 = f(gama.toDouble, 10.0)
+      f10 >= 2 * f0
+    }
+
+  // F (gama, V) => capture totale
+  def seuilEfficacite(f: (Double, Double) => Double) =
+    (BigDecimal(0.0) to 1.0 by 0.001).sortBy { gama =>
+      val f0 = f(gama.toDouble, 0.0)
+      val f10 = f(gama.toDouble, 10.0)
+      math.abs(f0 - f10)
+    }.head.toDouble
 
   def reef(
     V: Double,
@@ -75,17 +119,15 @@ object Reef {
     beta0: Double,
     t: Double,
     step: Double = 0.001) =
-    println(V)
 
     def beta(v: Double) =
       beta0 * V / (1 + sigma * V)
-    println(beta(V))
 
     def nu1 =
       def p1 = a / ((1 - alpha) * K) + beta(V)
       def p2 = (a / ((1 - alpha) * K)) + beta(V) + (a / (alpha * K + V * deltaK))
       p1 / p2
-    println(nu1)
+
     import math.*
     def dn(state: Array[Double], t: Double) =
       def n = state(0)
@@ -127,8 +169,6 @@ object Reef {
     step: Double = 0.001) =
     import math.*
 
-    println(V)
-
     def beta(v: Double) =
       beta0 * V / (1 + sigma * V)
 
@@ -136,19 +176,15 @@ object Reef {
       def p1 = a / ((1 - alpha) * K) + beta(V)
       def p2 = (a / ((1 - alpha) * K)) + beta(V) + (a / (alpha * K + V * deltaK))
       p1 / p2
-    println(nu1)
 
     def n_eq_compute =
       c / (p * q * (gama * nu1 + (1 - gama) *(1-nu1)))
-
-    println(n_eq_compute)
 
     def E_eq =
       math.max(
         r / (q*(gama*nu1 + (1-gama) * (1 - nu1))) * (1 - (pow(nu1,2)) * n_eq_compute / (alpha * K + V * deltaK) - (pow(1-nu1,2))*n_eq_compute/ ((1 - alpha) * K)),
         0.0
       )
-    println(E_eq)
 
     def K_Tilde =
       1 / ( pow(nu1,2)/(alpha*K + V *deltaK) +  (pow((1-nu1),2))/((1-alpha)*K) )

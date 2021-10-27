@@ -3,18 +3,24 @@ package reef
 
 @main def hello: Unit =
   val test = Reef.reef(
-    V = 0, //Fishing cost per unit effort
-    alpha = 0, //Ratio of MPA
-    gama = 0, //Distribution of Fishing effort between fishing area and artificial reef
-    deltaK = 0, //Fish carrying capacity per AR
-    K = 100, //Fish carrying capacity of the environment
-    a = 2, //Fish mobility
-    c = 1,
+
+    c = 1, //cout d'exploitation
     p = 1, //Fish price
+
     q = 1, //Fish catchability
+    K = 100, //Fish carrying capacity of the environment
     r = 0.5, //Fish growth rate
-    beta0 = 1, //AR attraction parameter 1
-    sigma = 0, //AR attraction parameter 2
+    a = 2, //Fish mobility
+
+    alpha = 0.2, //Ratio of MPA
+    deltaK = 10, //Fish carrying capacity per AR
+    beta0 = 0.5, //AR attraction parameter 1
+    sigma = 0.1, //AR attraction parameter 2
+
+    V = 2.56, // Volume de recif ( (10m2)
+    gama = 0, //Distribution of Fishing effort between fishing area and artificial reef
+
+    // conditions initiale (pour EDO)
     n0 = 1,
     E0 = 1,
     t = 10)
